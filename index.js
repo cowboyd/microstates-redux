@@ -11,10 +11,17 @@ export function createReducer(Type, initialValue) {
     let start = create(Type, valueOf(state));
 
     if (action.type === '@@MICROSTATES/INIT') {
+      // This is just the store initializing. Capture a reference
+      // to it and now we can save it for later in order to dispatch
+      // actions.
       reduxStore = action.store;
       return proxy(start);
     } else if (action.type.startsWith('M:') && action.id === id) {
-      let microstate = action.path.reduce((microstate, key) => {
+      // this is a microstate transition.
+      let { path, transitionName, args } = action;
+
+      //find the substate at the path specified in the action.
+      let microstate = path.reduce((microstate, key) => {
         if (isArrayType(microstate)) {
           let value = valueOf(microstate)[key];
           return mount(microstate, create(microstate.constructor.T, value), key);
@@ -22,9 +29,14 @@ export function createReducer(Type, initialValue) {
           return microstate[key];
         }
       }, start);
-      let next = microstate[action.transitionName](...action.args);
+
+      // now that we've found the target, invoke the transition.
+      let next = microstate[transitionName](...args);
+
+      // return the resulting state (if it's changed)
       return valueOf(next) === valueOf(state) ? state : proxy(next);
     } else {
+      // not a microstate action
       if (state != null) {
         return state;
       } else {
