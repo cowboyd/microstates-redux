@@ -64,5 +64,33 @@ store.getState().state //=> 7
 Yes, despite what the internet has come to make us believe, Redux
 _can_ be this simple.
 
+## Development
+
+This is still a proof of concept and needs a couple of patches to
+microstates in order to work. You will need to download and checkout,
+build and link the
+[cl/experimental-exports-for-microstates-redux](https://github.com/microstates/microstates.js/tree/cl/experimental-exports-for-microstates-redux)
+branch of microstates.
+
+``` text
+$ git clone https://github.com/microstates/microstates.js --branch cl/experimental-exports-for-microstates-redux
+$ cd microstates
+$ yarn
+$ yarn build && yarn link
+```
+
+Then, checkout this repository, and link the patched microstates:
+
+``` text
+$ yarn link microstates
+$ yarn
+```
+
+Run tests!
+
+``` text
+$ yarn test
+```
+
 [1]: https://github.com/microstates/microstates.js
 [2]: https://redux.js.org
